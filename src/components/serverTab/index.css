@@ -1,0 +1,43 @@
+.serverTab {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+
+    .serverTabHead {
+        display: flex;
+        align-items: center;
+        padding: 6px;
+    }
+
+    .responseWrapper {
+        border-top: 1px solid #333333;
+        text-align: left;
+
+        .scrollWrapper {
+            overflow: auto;
+            border: 1px solid #d9d9d9;
+            padding: 6px;
+            display: flex;
+            flex-direction: column;
+            width: calc(100vw - 280px);
+            max-width: calc(100vw - 280px);
+            height: calc(100vh - 405px);
+            max-height: calc(100vh - 405px);
+        }
+    }
+
+    .serverRawBody {
+        display: flex;
+        flex-direction: column;
+
+        span {
+            height: 35px;
+            line-height: 35px;
+            border-bottom: 1px solid white;
+        }
+    }
+
+    textarea {
+        width: 100%;
+    }
+}

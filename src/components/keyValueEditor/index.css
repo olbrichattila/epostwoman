@@ -1,0 +1,25 @@
+.keyValueEditor {
+    width: 100%;
+    border-collapse: collapse;
+
+    span {
+        &.addBtn {
+            margin-top: 6px;
+            display: block;
+            box-sizing: border-box;
+            font-size: 30px;
+            width: 35px;
+            height: 30px;
+            font-weight: bold;
+            border: 1px solid white;
+            background-color: white;
+            color: black;
+            cursor: pointer;
+            border-radius: 50%;
+
+            &:hover {
+                background-color: #d9d9d9;
+            }
+        }
+    }
+}

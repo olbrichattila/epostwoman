@@ -1,0 +1,25 @@
+.keyValueRow {
+    input {
+        box-sizing: border-box;
+        border: none !important;
+        border-bottom: 1px solid white !important;
+        background-color: black !important;
+        width: 95%;
+        margin: 0 !important;
+        padding: 3px !important;
+
+        &:focus {
+            border-bottom: 2px solid blue !important;;
+            outline: none;
+          }
+    }
+
+    td {
+        padding: 6px;
+        border: 1px solid #666666;
+    }
+
+    td:first-child, td:last-child {
+        width: 25px;
+    }
+}

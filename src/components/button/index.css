@@ -1,0 +1,15 @@
+.btn {
+    display: inline-flex;
+    border: 1px solid blue;
+    background-color: darkblue;
+    color: white;
+    border-radius: 3px;
+    padding: 8px 12px;
+    cursor: pointer;
+    user-select: none;
+
+    &:hover {
+        background-color: black;
+        color: white;
+    }
+}

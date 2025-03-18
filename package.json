@@ -1,0 +1,96 @@
+{
+  "name": "postwoman",
+  "main": "electron.js",
+  "version": "0.1.0",
+  "private": false,
+  "homepage": "./",
+  "dependencies": {
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.2.0",
+    "@testing-library/user-event": "^13.5.0",
+    "axios": "^1.8.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-icons": "^5.5.0",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4",
+    "electron-is-dev": "^3.0.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "PUBLIC_URL=./ react-scripts build",
+    "dist": "electron-builder",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "electron": "electron electron.js",
+    "electron-start": "concurrently \"npm start\" \"wait-on http://localhost:3000 && electron electron.js\"",
+    "electron-build": "npm run build && cp electron.js build/ && cp preload.js build/ && electron-builder"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "electron": "^35.0.2",
+    "electron-builder": "^25.1.8",
+    "wait-on": "^8.0.2"
+  },
+  "build": {
+    "appId": "com.aolbrich.postwoman",
+    "productName": "PostWoman",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*",
+      "!node_modules/.bin",
+      "!node_modules/electron*",
+      "!node_modules/@types",
+      "!**/*.map"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "linux": {
+      "icon": "build/icons",
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "desktop": {
+        "Name": "PostWoman",
+        "Comment": "API tester",
+        "Type": "Application",
+        "Categories": "Utility;Application;"
+      }
+    },
+    "deb": {
+      "afterInstall": "./postinst.sh"
+    },
+    "asar": true
+  },
+  "author": {
+    "name": "Attila Olbrich",
+    "email": "attila@osoft.hu",
+    "url": "https://attilaolbrich.co.uk"
+  }
+}

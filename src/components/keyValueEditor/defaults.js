@@ -1,0 +1,1 @@
+export const initialKeyValueRow = {key: '', value: '', checked: false}
