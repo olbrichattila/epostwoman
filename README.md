@@ -6,6 +6,8 @@ Electron PostWoman is a cross-platform desktop application for API testing, simi
 
 The application is designed for developers who need an all-in-one API testing solution that supports both request sending and server-side debugging.
 
+![Screenshot 1](screenshot.png)
+
 ## Features  
 
 ### ✅ Current Capabilities  
