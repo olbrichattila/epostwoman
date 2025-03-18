@@ -44,6 +44,9 @@ Electron PostWoman is built using:
 
 The application supports **Windows, macOS, and Linux**. While it has not been tested on Raspberry Pi, it may also be compatible.
 
+## NodeJS version:
+- node/22.14.0
+
 ## Current Status  
 
 The project is in **beta testing**. Contributions, feedback, and issue reports are welcome!  

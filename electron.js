@@ -5,7 +5,7 @@ const path = require("path");
 // const isDev = require("electron-is-dev");
 const fs = require("fs");
 
-const isDev = true;
+const isDev = false;
 
 const settingsPath = path.join(app.getPath("userData"), "settings.json");
 let mainWindow;
