@@ -25,12 +25,9 @@ const RequestTab = ({ request = initialRequest, tabName }) => {
     window.electronAPI.sendMessage(
       "http-request",
       localState.url,
-      "GET",
-      "body",
-      []
-      // localState.method,
-      // requestBody,
-      // localState.headers
+      localState.method,
+      requestBody,
+      localState.headers
     );
 
     const handleResponse = (response) => {

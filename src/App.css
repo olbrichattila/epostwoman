@@ -1,5 +1,7 @@
 .app {
   text-align: center;
+  display: flex;
+  box-sizing: border-box;
   input, textarea, select {
     border: 1px solid #333333;
     background-color: #333333;
