@@ -4,11 +4,17 @@ import Button from "../../components/button";
 import ServerTab from "../../components/serverTab";
 import RequestTab from "../../components/requestTab";
 import PageControl from "../../components/pageControl";
+import ModalInput from "../../components/modalInput";
 import "./index.css";
 
 const Page = () => {
   const [requestTabs, setRequestTabs] = useState([]);
   const [serverTabs, setServerTabs] = useState([]);
+  const [renameModalData, setRenameModalData] = useState({
+    index: -1,
+    value: "",
+    isRequest: true,
+  });
   const { onGetState, onSetState, onSetServerRequest } =
     useContext(DataContext);
 
@@ -52,6 +58,59 @@ const Page = () => {
     onSetServerRequest(data.port, data);
   };
 
+  const onRenameRequestTab = (name) => {
+    if (renameModalData.isRequest) {
+      setRequestTabs([
+        ...requestTabs.slice(0, renameModalData.index),
+        <RequestTab key={renameModalData.index} tabName={name} />,
+        ...requestTabs.slice(renameModalData.index + 1),
+      ]);
+
+      setRenameModalData({ index: -1, value: "", isRequest: false });
+      return
+    }
+
+    setServerTabs([
+        ...serverTabs.slice(0, renameModalData.index),
+        <ServerTab key={renameModalData.index} tabName={name} />,
+        ...serverTabs.slice(renameModalData.index + 1),
+      ]);
+
+    setRenameModalData({ index: -1, value: "", isRequest: true });
+  };
+
+  const onCloseRequestTab = (index) => {
+    setRequestTabs([
+      ...requestTabs.slice(0, index),
+      ...requestTabs.slice(index + 1),
+    ]);
+  };
+
+  const onCloseServerTab = (index) => {
+    setServerTabs([
+      ...serverTabs.slice(0, index),
+      ...serverTabs.slice(index + 1),
+    ]);
+  };
+
+  const onSetRenameModalData = (value, index, tabName, isRequest) => {
+    if (value == "rename") {
+      setRenameModalData({
+        index,
+        value: tabName,
+        isRequest,
+      });
+    }
+
+    if (value == "close") {
+      if (isRequest) {
+        onCloseRequestTab(index);
+      } else {
+        onCloseServerTab(index)
+      }
+    }
+  };
+
   useEffect(() => {
     const handleRequestReceived = (data) => handleEvent(data);
 
@@ -70,6 +129,14 @@ const Page = () => {
 
   return (
     <div className="page">
+      <ModalInput
+        value={renameModalData.value}
+        visible={renameModalData.index !== -1}
+        onOk={(name) => onRenameRequestTab(name)}
+        onCancel={() =>
+          setRenameModalData({ index: -1, value: "", isRequest: true })
+        }
+      />
       <div className="leftMenu">
         <div className="buttonWrapper">
           <Button title="Save tabs" onClick={() => saveSettings()} />
@@ -83,11 +150,15 @@ const Page = () => {
           <PageControl
             tabName="Requests"
             canClose
-            onClose={(index) =>
-              setRequestTabs([
-                ...requestTabs.slice(0, index),
-                ...requestTabs.slice(index + 1),
-              ])
+            canEdit
+            onClose={(index) => onCloseRequestTab(index)}
+            onMoreEdit={(index, value) =>
+              onSetRenameModalData(
+                value,
+                index,
+                requestTabs[index].props.tabName,
+                true
+              )
             }
             onAddButton={() =>
               setRequestTabs([
@@ -103,13 +174,17 @@ const Page = () => {
           </PageControl>
           <PageControl
             tabName="Servers"
-            onClose={(index) =>
-              setServerTabs([
-                ...serverTabs.slice(0, index),
-                ...serverTabs.slice(index + 1),
-              ])
+            onClose={(index) => onCloseServerTab(index)}
+            onMoreEdit={(index, value) =>
+              onSetRenameModalData(
+                value,
+                index,
+                serverTabs[index].props.tabName,
+                false
+              )
             }
             canClose
+            canEdit
             onAddButton={() =>
               setServerTabs([
                 ...serverTabs,

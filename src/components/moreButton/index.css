@@ -1,0 +1,65 @@
+.moreBtn {
+  display: inline-flex;
+  background-color: #222222;
+  position: relative;
+  padding: 0;
+  width: 10px;
+  height: 22px;
+  margin: 0px 3px;
+  vertical-align: middle;
+
+  div {
+    &.dotWrapper {
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      padding: 2px;
+      cursor: pointer;
+      user-select: none;
+
+      &:hover {
+        background-color: #444444;
+      }
+
+      .dot {
+        box-sizing: border-box;
+        display: flex;
+        padding: 0;
+        margin: 2px;
+        width: 2px;
+        height: 2px;
+        border: 1px solid white;
+        border-radius: 50%;
+      }
+    }
+  }
+
+  .menu {
+    width: 100px;
+    display: none;
+    position: absolute;
+    z-index: 999;
+    background: #333333;
+    color: white;
+    border: 1px solid #666666;
+    border-radius: 3px;
+    left: 12px;
+    top: -2px;
+    box-shadow: 2px 2px 1px #999999;
+    font-size: 0.9em;
+
+    div {
+      padding: 6px 8px;
+      border-bottom: 1px solid #666666;
+      text-align: left;
+
+      &:hover {
+        color: aqua;
+      }
+    }
+
+    &.active {
+      display: block;
+    }
+  }
+}

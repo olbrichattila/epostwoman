@@ -1,63 +1,71 @@
 .pageControl {
+  display: flex;
+  flex-direction: column;
+  padding: 6px;
+  width: 100%;
+
+  .tabButtons {
+    display: flex;
+
+    .tabButton {
+      display: flex;
+      justify-items: space-around;
+      cursor: pointer;
+      border-top: 1px solid #999999;
+      border-left: 1px solid #999999;
+      border-right: 1px solid #999999;
+      padding: 6px 0px;
+      border-top-left-radius: 3px;
+      border-top-right-radius: 3px;
+
+      &.active {
+        background-color: white;
+        color: black;
+
+        span {
+          border: 1px solid black;
+          background-color: black;
+          color: white;
+        }
+      }
+
+      &:hover {
+        background-color: #666666;
+      }
+
+      span.closeBtn {
+        display: inline-block;
+        line-height: 20px;
+        border: 1px solid #a9a9a9;
+        background-color: #a9a9a9;
+        color: black;
+        border-radius: 50%;
+        box-sizing: border-box;
+        margin: 0px 3px;
+        width: 20px;
+        height: 20px;
+        margin-top: 1px;
+      }
+
+      label {
+        height: 20px;
+        line-height: 20px;
+        padding: 0 12px;
+      }
+    }
+  }
+
+  .tabSheet {
+    display: none;
+    &.active {
+      display: flex;
+    }
+  }
+
+  .tabContent {
+    padding: 6px;
     display: flex;
     flex-direction: column;
-    padding: 6px;
-    width: 100%;
-
-    .tabButtons {
-        display: flex;
-        
-        .tabButton {
-            cursor: pointer;
-            border-top: 1px solid #999999;
-            border-left: 1px solid #999999;
-            border-right: 1px solid #999999;
-            padding: 6px 12px;
-            border-top-left-radius: 6px;
-            border-top-right-radius: 6px;
-
-            &.active {
-                background-color: white;
-                color: black;
-
-                span {
-                    border: 1px solid black;
-                    background-color: black;
-                    color: white;
-                }
-            }
-
-            &:hover {
-                background-color: #666666;
-            }
-
-            span {
-                display: inline-block;
-                line-height: 20px;
-                border: 1px solid white;
-                background-color: white;
-                color: black;
-                border-radius: 50%;
-                box-sizing: border-box;
-                margin: 0px 3px;
-                width: 20px;
-                height: 20px;
-            }
-        }
-    }
-
-    .tabSheet {
-        display: none;
-        &.active {
-            display: flex;
-        }
-    }
-
-    .tabContent {
-        padding: 6px;
-        display: flex;
-        flex-direction: column;
-        border: 1px solid #999999;;
-    }
+    border: 1px solid #666666;
+  }
 }
-

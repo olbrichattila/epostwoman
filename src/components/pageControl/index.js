@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import "./index.css";
+import MoreButton from "../moreButton";
 
 const PageControl = ({
   children,
   onAddButton = null,
   onClose = () => {},
   onPageChange = () => {},
+  onMoreEdit = () => {},
   canClose = false,
+  canEdit = false
 }) => {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 
@@ -34,14 +37,15 @@ const PageControl = ({
                 index === selectedTabIndex ? " active" : ""
               }`}
             >
-              {child.props.tabName ?? `Tab ${index + 1}`}
-              {canClose ? <span onClick={() => onClose(index)}>x</span> : null}
+              {canEdit ? <MoreButton onMenuClick={(itemName) => onMoreEdit(index, itemName)} /> : null}
+              {child.props.tabName ? <label>{`Tab ${index + 1}`}</label> : null}
+              {canClose ? <span className="closeBtn" onClick={() => onClose(index)}>x</span> : null}
             </div>
           );
         })}
         {onAddButton && (
           <div className="tabButton" onClick={() => onInternalAddButtonClick()}>
-            +
+            <label>+</label>
           </div>
         )}
       </div>

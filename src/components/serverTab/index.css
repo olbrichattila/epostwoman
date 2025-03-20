@@ -17,7 +17,7 @@
 
         .scrollWrapper {
             overflow: auto;
-            border: 1px solid #d9d9d9;
+            border: 1px solid #666666;
             padding: 6px;
             display: flex;
             flex-direction: column;

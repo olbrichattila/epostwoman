@@ -8,6 +8,10 @@
     cursor: pointer;
     user-select: none;
 
+    &.framed {
+        background-color: #333333;
+    }
+
     &:hover {
         background-color: black;
         color: white;

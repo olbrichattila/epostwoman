@@ -1,0 +1,78 @@
+.modalInputShadow {
+    position: absolute;
+    z-index: 999;
+    background-color: black;
+    opacity: 0.5;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+}
+
+.modalInput {
+    padding: 24px 0 0 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    position: absolute;
+    z-index: 1000;
+    width: 400px;
+    height: 200px;
+    border: 1px solid #666666;
+    background-color: #222222;
+    left: calc(50vw - 200px);
+    top: calc(50vh - 112px);
+
+    div {
+        display: flex;
+        justify-content: space-around;
+
+        &.head {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            background-color: #666666;
+            height: 24px;
+            line-height: 24px;
+
+            span {
+                cursor: pointer;
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: 24px;
+                height: 24px;
+                background-color: white;
+                border-radius: 3px;
+
+                &::before, &::after {
+                    position: absolute;
+                    left: 10px;
+                    top: 0;
+                    content: " ";
+                    width: 3px;
+                    height: 24px;
+                    background-color: #333333;
+                }
+
+                &::before {
+                    transform: rotate(45deg);
+                }
+
+                &::after {
+                    transform: rotate(-45deg);
+                }
+
+                &:hover {
+                    &::before {
+                        transform: rotate(35deg);
+                    }
+    
+                    &::after {
+                        transform: rotate(-35deg);
+                    }   
+                }
+            }
+        }
+    }
+}
