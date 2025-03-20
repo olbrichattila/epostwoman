@@ -38,7 +38,7 @@ const PageControl = ({
               }`}
             >
               {canEdit ? <MoreButton onMenuClick={(itemName) => onMoreEdit(index, itemName)} /> : null}
-              {child.props.tabName ? <label>{`Tab ${index + 1}`}</label> : null}
+              {child.props.tabName ? <label>{child.props.tabName}</label> : <label>{`Tab ${index + 1}`}</label>}
               {canClose ? <span className="closeBtn" onClick={() => onClose(index)}>x</span> : null}
             </div>
           );
