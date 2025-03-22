@@ -5,7 +5,7 @@ const path = require("path");
 // const isDev = require("electron-is-dev");
 const fs = require("fs");
 
-const isDev = true;
+const isDev = false;
 
 const settingsPath = path.join(app.getPath("userData"), "settings.json");
 let mainWindow;
@@ -41,7 +41,7 @@ function createWindow() {
   );
 
   if (isDev) {
-   mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
   }
 
   mainWindow.on("closed", () => (mainWindow = null));
@@ -139,11 +139,10 @@ ipcMain.on("load-state", (event) => {
       const content = fs.readFileSync(settingsPath, "utf-8");
       const obj = JSON.parse(content);
       event.reply("load-response", obj);
-      return
+      return;
     }
 
     event.reply("load-response", {});
-    
   } catch (error) {
     event.reply("load-response", {});
   }

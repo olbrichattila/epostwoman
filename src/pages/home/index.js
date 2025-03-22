@@ -7,14 +7,18 @@ import PageControl from "../../components/pageControl";
 import ModalInput from "../../components/modalInput";
 import "./index.css";
 
+const initialRenameModalState = {
+  index: -1,
+  value: "",
+  isRequest: true,
+};
+
 const Page = () => {
   const [requestTabs, setRequestTabs] = useState([]);
   const [serverTabs, setServerTabs] = useState([]);
-  const [renameModalData, setRenameModalData] = useState({
-    index: -1,
-    value: "",
-    isRequest: true,
-  });
+  const [renameModalData, setRenameModalData] = useState(
+    initialRenameModalState
+  );
   const { onGetState, onSetState, onSetServerRequest } =
     useContext(DataContext);
 
@@ -66,17 +70,17 @@ const Page = () => {
         ...requestTabs.slice(renameModalData.index + 1),
       ]);
 
-      setRenameModalData({ index: -1, value: "", isRequest: false });
-      return
+      setRenameModalData(initialRenameModalState);
+      return;
     }
 
     setServerTabs([
-        ...serverTabs.slice(0, renameModalData.index),
-        <ServerTab key={renameModalData.index} tabName={name} />,
-        ...serverTabs.slice(renameModalData.index + 1),
-      ]);
+      ...serverTabs.slice(0, renameModalData.index),
+      <ServerTab key={renameModalData.index} tabName={name} />,
+      ...serverTabs.slice(renameModalData.index + 1),
+    ]);
 
-    setRenameModalData({ index: -1, value: "", isRequest: true });
+    setRenameModalData(initialRenameModalState);
   };
 
   const onCloseRequestTab = (index) => {
@@ -94,7 +98,7 @@ const Page = () => {
   };
 
   const onSetRenameModalData = (value, index, tabName, isRequest) => {
-    if (value == "rename") {
+    if (value === "rename") {
       setRenameModalData({
         index,
         value: tabName,
@@ -102,11 +106,11 @@ const Page = () => {
       });
     }
 
-    if (value == "close") {
+    if (value === "close") {
       if (isRequest) {
         onCloseRequestTab(index);
       } else {
-        onCloseServerTab(index)
+        onCloseServerTab(index);
       }
     }
   };
@@ -133,9 +137,7 @@ const Page = () => {
         value={renameModalData.value}
         visible={renameModalData.index !== -1}
         onOk={(name) => onRenameRequestTab(name)}
-        onCancel={() =>
-          setRenameModalData({ index: -1, value: "", isRequest: true })
-        }
+        onCancel={() => setRenameModalData(initialRenameModalState)}
       />
       <div className="leftMenu">
         <div className="buttonWrapper">

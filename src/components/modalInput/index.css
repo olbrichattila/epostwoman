@@ -28,16 +28,16 @@
         justify-content: space-around;
 
         &.head {
-            position: absolute;
+            position: absolute !important;
             top: 0;
-            width: 100%;
+            width: 400px;
             background-color: #666666;
             height: 24px;
             line-height: 24px;
 
             span {
                 cursor: pointer;
-                position: absolute;
+                position: absolute !important;
                 top: 0;
                 right: 0;
                 width: 24px;
@@ -46,7 +46,8 @@
                 border-radius: 3px;
 
                 &::before, &::after {
-                    position: absolute;
+                    content: " ";
+                    position: absolute !important;
                     left: 10px;
                     top: 0;
                     content: " ";

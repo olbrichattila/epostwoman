@@ -33,7 +33,7 @@ const ModalInput = ({
       <div className="modalInputShadow"></div>
       <div className="modalInput">
         <div className="head">
-          Rename
+          Rename Tab
           <span onClick={() => onInternalCancel()}></span>
         </div>
 
