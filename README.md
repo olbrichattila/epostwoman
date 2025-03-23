@@ -18,12 +18,12 @@ The application is designed for developers who need an all-in-one API testing so
 - Multiple server instances running on different ports simultaneously  
 - Response headers inspection for mock servers  
 - Optional raw body response for server requests  
+- Save/load request collections  
 
 ### 🚀 Upcoming Features  
 
 #### **Request Enhancements**  
 - Save/load request history  
-- Save/load request collections  
 - Authentication & Authorization (e.g., Bearer Token support)  
 - Pre-request scripts  
 - Cookie Manager  
