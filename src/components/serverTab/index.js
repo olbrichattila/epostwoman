@@ -5,9 +5,9 @@ import PageControl from "../pageControl";
 import "./index.css";
 import KeyValueEditor from "../keyValueEditor";
 
-const defaultLocalServerState = { port: 3001, rawBody: "", headers: [] };
+export const initialServerState = { port: 3001, rawBody: "", headers: [] };
 
-const ServerTab = ({ serverState = defaultLocalServerState, tabName }) => {
+const ServerTab = ({ serverState = initialServerState, tabName }) => {
   const { data, serverRequests, onSetServers } = useContext(DataContext);
   const [localState, setLocalState] = useState(serverState);
   const [serverStatus, setServerStatus] = useState("Server is not running.");

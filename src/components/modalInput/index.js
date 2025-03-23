@@ -3,6 +3,7 @@ import Button from "../button";
 import "./index.css";
 
 const ModalInput = ({
+  title = '',
   visible = false,
   value = "",
   onOk = () => {},
@@ -33,7 +34,7 @@ const ModalInput = ({
       <div className="modalInputShadow"></div>
       <div className="modalInput">
         <div className="head">
-          Rename Tab
+          {title}
           <span onClick={() => onInternalCancel()}></span>
         </div>
 

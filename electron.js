@@ -2,12 +2,23 @@ const { app, BrowserWindow, ipcMain, Menu } = require("electron");
 const axios = require("axios");
 const http = require("http");
 const path = require("path");
+
+const {
+  OpenDatabase,
+  CloseDatabase,
+  GetCollections,
+  SaveCollection,
+  LoadCollection,
+  DeleteCollection,
+} = require("./database");
+
 // const isDev = require("electron-is-dev");
 const fs = require("fs");
 
+OpenDatabase();
+
 const isDev = false;
 
-const settingsPath = path.join(app.getPath("userData"), "settings.json");
 let mainWindow;
 let servers = {};
 
@@ -45,6 +56,14 @@ function createWindow() {
   }
 
   mainWindow.on("closed", () => (mainWindow = null));
+}
+
+const getAllCollections = (event) => {
+  GetCollections((err, data) => {
+    if (!err) {
+      event.reply("collection-response", data);
+    }
+  })
 }
 
 // HTTP call:
@@ -128,24 +147,22 @@ ipcMain.on("get-server-status", (event, port) => {
   event.reply("server-status", !!servers[port]);
 });
 
-// Stop the web server
-ipcMain.on("save-state", (event, data) => {
-  fs.writeFileSync(settingsPath, JSON.stringify(data));
+ipcMain.on("get-collections", getAllCollections);
+
+ipcMain.on("save-collection", (event, collectionName, data) => {
+  SaveCollection(collectionName, JSON.stringify(data), () => getAllCollections(event));
 });
 
-ipcMain.on("load-state", (event) => {
-  try {
-    if (fs.existsSync) {
-      const content = fs.readFileSync(settingsPath, "utf-8");
-      const obj = JSON.parse(content);
-      event.reply("load-response", obj);
-      return;
-    }
+ipcMain.on("delete-collection", (event, collectionName) => {
+  DeleteCollection(collectionName, () => getAllCollections(event));
+});
 
-    event.reply("load-response", {});
-  } catch (error) {
-    event.reply("load-response", {});
-  }
+ipcMain.on("load-collection", (event, collectionName) => {
+  LoadCollection(collectionName, (err, data) => {
+    if (!err) {
+      event.reply("load-response", JSON.parse(data["collection"]));
+    }
+  });
 });
 
 app.on("ready", createWindow);
@@ -157,6 +174,7 @@ app.on("window-all-closed", () => {
 });
 
 app.on("will-quit", () => {
+  CloseDatabase();
   for (const port in servers) {
     servers[port].close();
   }

@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
 import { DataContext } from "../../context";
+import { FaTrash, FaSave } from "react-icons/fa";
 import Button from "../../components/button";
-import ServerTab from "../../components/serverTab";
-import RequestTab from "../../components/requestTab";
+import ServerTab, { initialServerState } from "../../components/serverTab";
+import RequestTab, { initialClientRequest } from "../../components/requestTab";
 import PageControl from "../../components/pageControl";
 import ModalInput from "../../components/modalInput";
+
 import "./index.css";
 
 const initialRenameModalState = {
@@ -19,16 +21,30 @@ const Page = () => {
   const [renameModalData, setRenameModalData] = useState(
     initialRenameModalState
   );
-  const { onGetState, onSetState, onSetServerRequest } =
-    useContext(DataContext);
+  const [showNewCollectionModal, setShowNewCollectionModal] = useState(false);
+  const [selectedCollection, setSelectedCollection] = useState("");
+  const [collections, setCollections] = useState([]);
+  const {
+    onGetState,
+    onSetState,
+    onSetServerRequest,
+    renameServerTab,
+    renameRequestTab,
+    onSetRequests,
+    onSetServers
+  } = useContext(DataContext);
 
-  const saveSettings = () => {
+  const saveCollection = (name) => {
     const data = onGetState();
-    window.electronAPI.sendMessage("save-state", data);
+    window.electronAPI.sendMessage("save-collection", name, data);
   };
 
-  const loadSettings = () => {
-    window.electronAPI.sendMessage("load-state");
+  const deleteCollection = (name) => {
+    window.electronAPI.sendMessage("delete-collection", name);
+  };
+
+  const loadCollection = (name) => {
+    window.electronAPI.sendMessage("load-collection", name);
 
     const handleLoadResponse = (response) => {
       setRequestTabs(
@@ -52,6 +68,7 @@ const Page = () => {
       );
 
       onSetState(response);
+      setSelectedCollection(name);
       window.electronAPI.removeListener("load-response", handleLoadResponse);
     };
 
@@ -62,8 +79,10 @@ const Page = () => {
     onSetServerRequest(data.port, data);
   };
 
-  const onRenameRequestTab = (name) => {
+  const onRenameTab = (name) => {
     if (renameModalData.isRequest) {
+      const oldTabName = requestTabs[renameModalData.index].props.tabName;
+
       setRequestTabs([
         ...requestTabs.slice(0, renameModalData.index),
         <RequestTab key={renameModalData.index} tabName={name} />,
@@ -71,9 +90,11 @@ const Page = () => {
       ]);
 
       setRenameModalData(initialRenameModalState);
+      renameRequestTab(oldTabName, name);
       return;
     }
 
+    const oldTabName = serverTabs[renameModalData.index].props.tabName;
     setServerTabs([
       ...serverTabs.slice(0, renameModalData.index),
       <ServerTab key={renameModalData.index} tabName={name} />,
@@ -81,6 +102,7 @@ const Page = () => {
     ]);
 
     setRenameModalData(initialRenameModalState);
+    renameServerTab(oldTabName, name);
   };
 
   const onCloseRequestTab = (index) => {
@@ -115,9 +137,22 @@ const Page = () => {
     }
   };
 
-  useEffect(() => {
-    const handleRequestReceived = (data) => handleEvent(data);
+  const onSaveNewCollection = (name) => {
+    if (name !== "") {
+      window.electronAPI.sendMessage("save-collection", name, {
+        servers: {},
+        requests: {},
+      });
+    }
+    setShowNewCollectionModal(false);
+  };
 
+  useEffect(() => {
+    const handleRequestReceived = (response) => handleEvent(response);
+    const handleResponse = (response) => setCollections(response);
+
+    window.electronAPI.sendMessage("get-collections");
+    window.electronAPI.onReceiveMessage("collection-response", handleResponse);
     window.electronAPI.onReceiveMessage(
       "request-received",
       handleRequestReceived
@@ -128,24 +163,67 @@ const Page = () => {
         "request-received",
         handleRequestReceived
       );
+
+      window.electronAPI.removeListener("collection-response", handleResponse);
     };
   }, []);
 
   return (
     <div className="page">
       <ModalInput
+        title="New collection"
+        value=""
+        visible={showNewCollectionModal}
+        onOk={(name) => onSaveNewCollection(name)}
+        onCancel={() => setShowNewCollectionModal(false)}
+      />
+      <ModalInput
+        title="Rename tab"
         value={renameModalData.value}
         visible={renameModalData.index !== -1}
-        onOk={(name) => onRenameRequestTab(name)}
+        onOk={(name) => onRenameTab(name)}
         onCancel={() => setRenameModalData(initialRenameModalState)}
       />
       <div className="leftMenu">
         <div className="buttonWrapper">
-          <Button title="Save tabs" onClick={() => saveSettings()} />
+          <Button
+            title="New Collection"
+            onClick={() => setShowNewCollectionModal(true)}
+          />
         </div>
-        <div className="buttonWrapper">
-          <Button title="Load tabs" onClick={() => loadSettings()} />
-        </div>
+        <table className="collectionList">
+          <thead>
+            <tr>
+              <th colSpan={3}>Collections</th>
+            </tr>
+          </thead>
+          <tbody>
+            {collections &&
+              collections.map((collectionName) => (
+                <tr
+                  key={collectionName}
+                  className={
+                    collectionName === selectedCollection ? "active" : ""
+                  }
+                >
+                  <td onClick={() => loadCollection(collectionName)}>
+                    {collectionName}
+                  </td>
+                  <td>
+                    <span onClick={() => saveCollection(collectionName)}>
+                      <FaSave />
+                    </span>
+                  </td>
+
+                  <td>
+                    <span onClick={() => deleteCollection(collectionName)}>
+                      <FaTrash />
+                    </span>
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
       </div>
       <div className="pages">
         <PageControl>
@@ -162,15 +240,14 @@ const Page = () => {
                 true
               )
             }
-            onAddButton={() =>
+            onAddButton={() => {
+              const tabName = `Request ${requestTabs.length + 1}`;
               setRequestTabs([
                 ...requestTabs,
-                <RequestTab
-                  key={requestTabs.length}
-                  tabName={`Request ${requestTabs.length + 1}`}
-                />,
-              ])
-            }
+                <RequestTab key={requestTabs.length} tabName={tabName} />,
+              ]);
+              onSetRequests(tabName, initialClientRequest);
+            }}
           >
             {requestTabs}
           </PageControl>
@@ -187,12 +264,15 @@ const Page = () => {
             }
             canClose
             canEdit
-            onAddButton={() =>
+            onAddButton={() => {
+              const tabName = `Server ${serverTabs.length + 1}`;
               setServerTabs([
                 ...serverTabs,
-                <ServerTab tabName={`Server ${serverTabs.length + 1}`} />,
+                <ServerTab tabName={tabName} />,
               ])
+              onSetServers(tabName, initialServerState)
             }
+          }
           >
             {serverTabs}
           </PageControl>

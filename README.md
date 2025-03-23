@@ -27,6 +27,8 @@ The application is designed for developers who need an all-in-one API testing so
 - Authentication & Authorization (e.g., Bearer Token support)  
 - Pre-request scripts  
 - Cookie Manager  
+- Render response as HTML
+- Render response as Json and prettify
 
 #### **Server Enhancements**  
 - Predefined response routing  

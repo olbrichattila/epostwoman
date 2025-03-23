@@ -32,6 +32,34 @@ const DataContextProvider = ({ children }) => {
     setServerRequests({ ...serverRequests, [port]: data });
   };
 
+  const renameServerTab = (oldName, newName) => {
+    const updatedServers = { ...data.servers };
+
+    if (updatedServers[oldName]) {
+      updatedServers[newName] = updatedServers[oldName];
+      delete updatedServers[oldName];
+    }
+
+    setData({
+      ...data,
+      servers: updatedServers
+    });
+  }
+
+  const renameRequestTab = (oldName, newName) => {
+    const updatedRequests = { ...data.requests };
+
+    if (updatedRequests[oldName]) {
+      updatedRequests[newName] = updatedRequests[oldName];
+      delete updatedRequests[oldName];
+    }
+
+    setData({
+      ...data,
+      requests: updatedRequests
+    });
+  }
+
   return (
     <DataContext.Provider
       value={{
@@ -43,6 +71,8 @@ const DataContextProvider = ({ children }) => {
         onGetState,
         onSetState,
         onSetServerRequest,
+        renameServerTab,
+        renameRequestTab,
       }}
     >
       {children}

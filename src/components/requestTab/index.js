@@ -5,7 +5,7 @@ import PageControl from "../pageControl";
 import KeyValueEditor from "../keyValueEditor";
 import "./index.css";
 
-const initialRequest = {
+export const initialClientRequest = {
   body: "",
   url: "",
   method: "GET",
@@ -14,7 +14,7 @@ const initialRequest = {
   formRequest: [],
 };
 
-const RequestTab = ({ request = initialRequest, tabName }) => {
+const RequestTab = ({ request = initialClientRequest, tabName }) => {
   const { data, onSetRequests } = useContext(DataContext);
   const [serverStatus, setServerStatus] = useState(null);
   const [localState, setLocalState] = useState(request);

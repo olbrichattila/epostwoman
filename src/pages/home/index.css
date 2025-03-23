@@ -17,6 +17,31 @@
     .buttonWrapper {
       padding: 8px;
     }
+
+    table {
+      border-collapse: collapse;
+      border: 1px solid #999999;
+      tr {
+        &.active {
+          background-color: #003274;
+        }
+
+        th {
+          background-color: #0571ff;
+          padding: 8px;
+          font-weight: bold;
+        }
+
+        td {
+          border: 1px solid #999999;
+          padding: 6px;
+          cursor: pointer;
+          &:hover {
+            color: #0571ff;
+          }
+        }
+      }
+    }
   }
 
   .pages {
