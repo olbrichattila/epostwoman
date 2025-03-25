@@ -1,10 +1,10 @@
-import path from 'path';
-import sqlite3 from 'sqlite3';
-import { app } from 'electron';
+const path = require("path");
+const sqlite3 = require("sqlite3");
+const { app } = require("electron");
 
 let db;
 
-export const OpenDatabase = () => {
+const OpenDatabase = () => {
     const databasePath = path.join(app.getPath("userData"), "postwoman.db");
     db = new sqlite3.Database(databasePath);
     db.run(`CREATE TABLE IF NOT EXISTS collections (
@@ -14,7 +14,7 @@ export const OpenDatabase = () => {
         )`);
 }
 
-export const CloseDatabase = () => {
+const CloseDatabase = () => {
     db.close((err) => {
         if (err) {
             console.error('Error closing database', err);
@@ -24,7 +24,7 @@ export const CloseDatabase = () => {
     });
 }
 
-export const SaveCollection = (collectionName, data, callback) => {
+const SaveCollection = (collectionName, data, callback) => {
     db.run(`
         INSERT INTO collections (name, collection)
         VALUES (?, ?)
@@ -38,7 +38,7 @@ export const SaveCollection = (collectionName, data, callback) => {
      );
 }
 
-export const LoadCollection = (collectionName, callback) => {
+const LoadCollection = (collectionName, callback) => {
     const query = `SELECT * FROM collections WHERE name = ?`;
 
     db.get(query, [collectionName], (err, row) => {
@@ -49,7 +49,7 @@ export const LoadCollection = (collectionName, callback) => {
     });
 }
 
-export const GetCollections = (callback) => {
+const GetCollections = (callback) => {
     const query = `SELECT name FROM collections ORDER BY name`;
 
     db.all(query, [], (err, rows) => {
@@ -60,7 +60,7 @@ export const GetCollections = (callback) => {
     });
 }
 
-export const DeleteCollection = (name, callback) => {
+const DeleteCollection = (name, callback) => {
     const query = `DELETE FROM collections where name = ?`;
     db.run(query, [name], (err) => {
         if (!err) {
@@ -68,3 +68,12 @@ export const DeleteCollection = (name, callback) => {
         }
     });
 }
+
+module.exports = {
+    OpenDatabase,
+    CloseDatabase,
+    SaveCollection,
+    LoadCollection,
+    GetCollections,
+    DeleteCollection
+  };
