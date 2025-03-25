@@ -5,8 +5,11 @@
 
     .requestTabHead {
         display: flex;
-        align-items: center;
         padding: 6px;
+
+        input {
+            flex-grow: 1;
+        }
     }
 
     .requestWrapper {
