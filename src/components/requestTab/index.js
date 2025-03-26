@@ -60,15 +60,16 @@ const RequestTab = ({ request = initialClientRequest, tabName }) => {
       <div className="requestTabHead">
         <span>Method: </span>
         <select
+          value={localState.method}
           onChange={(e) =>
             onSetRequests(tabName, { ...localState, method: e.target.value })
           }
         >
-          <option>GET</option>
-          <option>POST</option>
-          <option>DELETE</option>
-          <option>PATCH</option>
-          <option>OPTIONS</option>
+          <option value="GET">GET</option>
+          <option value="POST">POST</option>
+          <option value="DELETE">DELETE</option>
+          <option value="PATCH">PATCH</option>
+          <option value="OPTIONS">OPTIONS</option>
           {/* TODO  more */}
         </select>
         <input

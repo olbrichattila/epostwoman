@@ -48,4 +48,19 @@
     display: flex;
     flex-grow: 1;
   }
+
+  .collectionList {
+
+    border: none !important;
+
+    tr {
+      &:nth-child(odd) {
+        background-color: #333333;
+      }
+      td {
+        border: none !important;
+        
+      }
+    }
+  }
 }

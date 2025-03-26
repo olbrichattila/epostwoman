@@ -10,6 +10,7 @@ const {
   SaveCollection,
   LoadCollection,
   DeleteCollection,
+  RenameCollection,
 } = require("./database");
 
 // const isDev = require("electron-is-dev");
@@ -155,6 +156,10 @@ ipcMain.on("save-collection", (event, collectionName, data) => {
 
 ipcMain.on("delete-collection", (event, collectionName) => {
   DeleteCollection(collectionName, () => getAllCollections(event));
+});
+
+ipcMain.on("rename-collection", (event, oldName, newName) => {
+  RenameCollection(oldName, newName, () => getAllCollections(event));
 });
 
 ipcMain.on("load-collection", (event, collectionName) => {

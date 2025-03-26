@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { DataContext } from "../../context";
-import { FaTrash, FaSave } from "react-icons/fa";
+import { FaTrash, FaSave, FaPen } from "react-icons/fa";
 import Button from "../../components/button";
 import ServerTab, { initialServerState } from "../../components/serverTab";
 import RequestTab, { initialClientRequest } from "../../components/requestTab";
@@ -24,6 +24,7 @@ const Page = () => {
   const [showNewCollectionModal, setShowNewCollectionModal] = useState(false);
   const [selectedCollection, setSelectedCollection] = useState("");
   const [collections, setCollections] = useState([]);
+  const [renameCollectionId, setRenameCollectionId] = useState(-1)
   const {
     onGetState,
     onSetState,
@@ -42,6 +43,12 @@ const Page = () => {
   const deleteCollection = (name) => {
     window.electronAPI.sendMessage("delete-collection", name);
   };
+
+  const onRenameCollection = (name) => {
+    const oldName = collections[renameCollectionId]
+    window.electronAPI.sendMessage("rename-collection", oldName, name);
+    setRenameCollectionId(-1)
+  }
 
   const loadCollection = (name) => {
     window.electronAPI.sendMessage("load-collection", name);
@@ -184,6 +191,14 @@ const Page = () => {
         onOk={(name) => onRenameTab(name)}
         onCancel={() => setRenameModalData(initialRenameModalState)}
       />
+      <ModalInput
+        title="Rename collection"
+        value={collections[renameCollectionId] ?? '' }
+        visible={renameCollectionId !== -1}
+        onOk={(name) => onRenameCollection(name)}
+        onCancel={() => setRenameCollectionId(-1)}
+      />
+
       <div className="leftMenu">
         <div className="buttonWrapper">
           <Button
@@ -194,12 +209,12 @@ const Page = () => {
         <table className="collectionList">
           <thead>
             <tr>
-              <th colSpan={3}>Collections</th>
+              <th colSpan={4}>Collections</th>
             </tr>
           </thead>
           <tbody>
             {collections &&
-              collections.map((collectionName) => (
+              collections.map((collectionName, idx) => (
                 <tr
                   key={collectionName}
                   className={
@@ -211,13 +226,19 @@ const Page = () => {
                   </td>
                   <td>
                     <span onClick={() => saveCollection(collectionName)}>
-                      <FaSave />
+                      <FaSave title="save" />
+                    </span>
+                  </td>
+
+                  <td>
+                    <span onClick={() => setRenameCollectionId(idx)}>
+                      <FaPen title="rename"/>
                     </span>
                   </td>
 
                   <td>
                     <span onClick={() => deleteCollection(collectionName)}>
-                      <FaTrash />
+                      <FaTrash title="delete"/>
                     </span>
                   </td>
                 </tr>

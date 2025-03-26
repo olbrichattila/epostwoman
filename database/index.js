@@ -69,11 +69,21 @@ const DeleteCollection = (name, callback) => {
     });
 }
 
+const RenameCollection = (oldName, newName, callback) => {
+    const query = `UPDATE collections set name=? where name = ?`;
+    db.run(query, [newName, oldName], (err) => {
+        if (!err) {
+            callback()
+        }
+    });
+}
+
 module.exports = {
     OpenDatabase,
     CloseDatabase,
     SaveCollection,
     LoadCollection,
     GetCollections,
-    DeleteCollection
+    DeleteCollection,
+    RenameCollection,
   };
