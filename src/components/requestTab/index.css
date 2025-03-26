@@ -13,13 +13,25 @@
     }
 
     .requestWrapper {
-        border-top: 1px solid #333333;
         text-align: left;
+        overflow: auto;
+        border: 1px solid #666666;
+        padding: 6px;
+        display: flex;
+        flex-direction: column;
+        width: calc(100vw - 280px);
+        max-width: calc(100vw - 280px);
+        height: calc(100vh - 425px);
+        max-height: calc(100vh - 425px);
     }
 
     .requestRawBody {
         display: flex;
         flex-direction: column;
+
+        textarea {
+            width: 100%;
+        }
 
         span {
             height: 35px;
