@@ -30,7 +30,9 @@ const Page = () => {
     onSetState,
     onSetServerRequest,
     renameServerTab,
+    deleteServerTab,
     renameRequestTab,
+    deleteRequestTab,
     onSetRequests,
     onSetServers
   } = useContext(DataContext);
@@ -113,17 +115,22 @@ const Page = () => {
   };
 
   const onCloseRequestTab = (index) => {
+    const tabName = requestTabs[index].props.tabName;
     setRequestTabs([
       ...requestTabs.slice(0, index),
       ...requestTabs.slice(index + 1),
     ]);
+    deleteRequestTab(tabName)
   };
 
   const onCloseServerTab = (index) => {
+    const tabName = serverTabs[index].props.tabName;
     setServerTabs([
       ...serverTabs.slice(0, index),
       ...serverTabs.slice(index + 1),
     ]);
+
+    deleteServerTab(tabName)
   };
 
   const onSetRenameModalData = (value, index, tabName, isRequest) => {

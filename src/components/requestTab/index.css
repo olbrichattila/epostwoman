@@ -23,14 +23,38 @@
         max-width: calc(100vw - 280px);
         height: calc(100vh - 425px);
         max-height: calc(100vh - 425px);
+
+        .error {
+            margin: 6px;
+            display: flex;
+            border: 1px solid red;
+            color: red;
+            border-radius: 3px;
+            background-color: #333333;
+            padding: 12px;
+
+            div {
+                display: flex;
+                flex-direction: column;
+                margin-left: 6px;
+                div {
+                    font-weight: 800;
+                    font-size: 1.2em;
+                    line-height: 150%;
+                }
+            }
+        }
     }
 
     .requestRawBody {
+        
         display: flex;
         flex-direction: column;
 
         textarea {
+            box-sizing: border-box;
             width: 100%;
+            margin: 0 !important;
         }
 
         span {
@@ -43,7 +67,11 @@
             display: flex;
             width: 100%;
             flex-direction: column;
-
         }
+    }
+
+    iframe {
+        background-color: white;
+        color: black;
     }
 }

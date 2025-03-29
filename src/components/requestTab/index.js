@@ -1,5 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { DataContext } from "../../context";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import Button from "../button";
 import PageControl from "../pageControl";
 import KeyValueEditor from "../keyValueEditor";
@@ -15,23 +17,31 @@ export const initialClientRequest = {
 };
 
 const RequestTab = ({ request = initialClientRequest, tabName }) => {
-  const { data, onSetRequests } = useContext(DataContext);
+  const { data, onSetRequests, updateCookies, getCookieStrings } =
+    useContext(DataContext);
   const [serverStatus, setServerStatus] = useState(null);
   const [localState, setLocalState] = useState(request);
   const [activePageIndex, setActivePageIndex] = useState(0);
 
   const postRequest = () => {
-    let requestBody = activePageIndex === 0 ? localState.requestBody : getFormRequest();
+    const requestBody =
+      activePageIndex === 0 ? localState.requestBody : getFormRequest();
+    const cookieStrings = getCookieStrings(tabName);
+    const headers = cookieStrings
+      ? [...localState.headers, { key: "Cookie", value: cookieStrings }]
+      : localState.headers;
+
     window.electronAPI.sendMessage(
       "http-request",
       localState.url,
       localState.method,
       requestBody,
-      localState.headers
+      headers
     );
 
     const handleResponse = (response) => {
       setServerStatus(response);
+      updateCookies(tabName, response.headers);
       window.electronAPI.removeListener("http-response", handleResponse);
     };
 
@@ -44,10 +54,18 @@ const RequestTab = ({ request = initialClientRequest, tabName }) => {
     localState.formRequest.forEach((item) => {
       params.append(item.key, item.value);
     });
-  
 
     return params.toString();
-  }
+  };
+
+  const isValidJSON = (str) => {
+    try {
+      JSON.parse(str);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
 
   useEffect(() => {
     if (data.requests[tabName]) {
@@ -84,7 +102,7 @@ const RequestTab = ({ request = initialClientRequest, tabName }) => {
       </div>
 
       <div className="requestRawBody">
-        <PageControl onPageChange={index => setActivePageIndex(index)}>
+        <PageControl onPageChange={(index) => setActivePageIndex(index)}>
           <div className="requestBody" tabName="Raw body">
             <textarea
               value={localState.requestBody}
@@ -117,7 +135,42 @@ const RequestTab = ({ request = initialClientRequest, tabName }) => {
 
       <div className="requestWrapper">
         {serverStatus ? (
-          <pre>{JSON.stringify(serverStatus, null, 2)}</pre>
+          <>
+            {serverStatus.error && (
+              <div className="error">
+                <FontAwesomeIcon icon={faExclamationTriangle}  size="3x" />
+                <div>
+                  <div>{serverStatus.message}</div>
+                  <div>{serverStatus.code}</div>
+                </div>
+              </div>
+            )}
+            <span>Content:</span>
+            <PageControl>
+              <pre tabName="Headers">
+                {JSON.stringify(serverStatus.headers, null, 2)}
+              </pre>
+              <pre tabName="Plain Text">{serverStatus.data}</pre>
+              <pre tabName="JSON">
+                <code>
+                  {isValidJSON(serverStatus.data)
+                    ? JSON.stringify(JSON.parse(serverStatus.data), null, 2)
+                    : "Invalid JSON string: " + serverStatus.data}
+                </code>
+              </pre>
+              <iframe
+                tabName="HTML"
+                srcDoc={serverStatus.data}
+                title="Inline HTML Iframe"
+                width="100%"
+                height="300px"
+                sandbox="allow-same-origin"
+              />
+              <pre tabName="Full response">
+                {JSON.stringify(serverStatus, null, 2)}
+              </pre>
+            </PageControl>
+          </>
         ) : null}
       </div>
     </div>
