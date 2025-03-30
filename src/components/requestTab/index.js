@@ -67,11 +67,52 @@ const RequestTab = ({ request = initialClientRequest, tabName }) => {
     }
   };
 
+  const parseCookies = (cookieHeaders) => {
+    const resultObj = {
+      headerCount: 0,
+      values: [],
+      render(value) {
+        const result = [];
+        for (var i = 0; i < this.headerCount; i++) {
+          result.push(value[i] ?? { key: "", value: "" });
+        }
+
+        return result;
+      },
+    };
+
+    if (!cookieHeaders) return resultObj;
+
+    resultObj.values = cookieHeaders.map((cookie) => {
+      const cookieList = [];
+      const parts = cookie.split(";");
+
+      for (let i = 0; i < parts.length; i++) {
+        const [key, ...valParts] = parts[i].split("=");
+        const value = valParts.join("=").trim();
+        cookieList.push({ key, value });
+        if (resultObj.headerCount < i) {
+          resultObj.headerCount = i;
+        }
+      }
+
+      return cookieList;
+    });
+
+    return resultObj;
+  };
+
   useEffect(() => {
     if (data.requests[tabName]) {
       setLocalState(data.requests[tabName]);
     }
   }, [data.requests, tabName]);
+
+  const parsedCookies = parseCookies(
+    serverStatus && serverStatus.headers["set-cookie"]
+      ? serverStatus.headers["set-cookie"]
+      : null
+  );
 
   return (
     <div className="requestTab">
@@ -138,7 +179,7 @@ const RequestTab = ({ request = initialClientRequest, tabName }) => {
           <>
             {serverStatus.error && (
               <div className="error">
-                <FontAwesomeIcon icon={faExclamationTriangle}  size="3x" />
+                <FontAwesomeIcon icon={faExclamationTriangle} size="3x" />
                 <div>
                   <div>{serverStatus.message}</div>
                   <div>{serverStatus.code}</div>
@@ -147,9 +188,19 @@ const RequestTab = ({ request = initialClientRequest, tabName }) => {
             )}
             <span>Content:</span>
             <PageControl>
-              <pre tabName="Headers">
-                {JSON.stringify(serverStatus.headers, null, 2)}
-              </pre>
+              <div tabName="Headers" className="scrollableTableWrapper">
+              <table >
+                <thead></thead>
+                <tbody>
+                  {Object.keys(serverStatus.headers).map((key) => (
+                    <tr>
+                      <td>{key}</td>
+                      <td>{serverStatus.headers[key]}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              </div>
               <pre tabName="Plain Text">{serverStatus.data}</pre>
               <pre tabName="JSON">
                 <code>
@@ -169,6 +220,31 @@ const RequestTab = ({ request = initialClientRequest, tabName }) => {
               <pre tabName="Full response">
                 {JSON.stringify(serverStatus, null, 2)}
               </pre>
+              <div tabName="Cookies" className="scrollableTableWrapper">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Cookie</th>
+                      <th colSpan={parsedCookies.headerCount - 1}>
+                        Other parameters
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {parsedCookies.values.map((value) => (
+                      <tr>
+                        {parsedCookies.render(value).map((item) => {
+                          return (
+                            <td>
+                              {item.key}: {item.value}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </PageControl>
           </>
         ) : null}

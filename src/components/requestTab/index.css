@@ -1,77 +1,97 @@
 .requestTab {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+
+  .requestTabHead {
     display: flex;
-    width: 100%;
+    padding: 6px;
+
+    input {
+      flex-grow: 1;
+    }
+  }
+
+  .requestWrapper {
+    text-align: left;
+    overflow: auto;
+    border: 1px solid #666666;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    width: calc(100vw - 280px);
+    max-width: calc(100vw - 280px);
+    height: calc(100vh - 425px);
+    max-height: calc(100vh - 425px);
+
+    .error {
+      margin: 6px;
+      display: flex;
+      border: 1px solid red;
+      color: red;
+      border-radius: 3px;
+      background-color: #333333;
+      padding: 12px;
+
+      div {
+        display: flex;
+        flex-direction: column;
+        margin-left: 6px;
+        div {
+          font-weight: 800;
+          font-size: 1.2em;
+          line-height: 150%;
+        }
+      }
+    }
+
+    .scrollableTableWrapper {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid #666;
+      table {
+        width: 100%;
+        white-space: nowrap;
+        border-collapse: collapse;
+
+        th,
+        td {
+          border: 1px solid #666;
+          padding: 3px 6px;
+          text-align: left;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+  }
+
+  .requestRawBody {
+    display: flex;
     flex-direction: column;
 
-    .requestTabHead {
-        display: flex;
-        padding: 6px;
-
-        input {
-            flex-grow: 1;
-        }
+    textarea {
+      box-sizing: border-box;
+      width: 100%;
+      margin: 0 !important;
     }
 
-    .requestWrapper {
-        text-align: left;
-        overflow: auto;
-        border: 1px solid #666666;
-        padding: 6px;
-        display: flex;
-        flex-direction: column;
-        width: calc(100vw - 280px);
-        max-width: calc(100vw - 280px);
-        height: calc(100vh - 425px);
-        max-height: calc(100vh - 425px);
-
-        .error {
-            margin: 6px;
-            display: flex;
-            border: 1px solid red;
-            color: red;
-            border-radius: 3px;
-            background-color: #333333;
-            padding: 12px;
-
-            div {
-                display: flex;
-                flex-direction: column;
-                margin-left: 6px;
-                div {
-                    font-weight: 800;
-                    font-size: 1.2em;
-                    line-height: 150%;
-                }
-            }
-        }
+    span {
+      height: 35px;
+      line-height: 35px;
+      border-bottom: 1px solid white;
     }
 
-    .requestRawBody {
-        
-        display: flex;
-        flex-direction: column;
-
-        textarea {
-            box-sizing: border-box;
-            width: 100%;
-            margin: 0 !important;
-        }
-
-        span {
-            height: 35px;
-            line-height: 35px;
-            border-bottom: 1px solid white;
-        }
-
-        .requestBody {
-            display: flex;
-            width: 100%;
-            flex-direction: column;
-        }
+    .requestBody {
+      display: flex;
+      width: 100%;
+      flex-direction: column;
     }
+  }
 
-    iframe {
-        background-color: white;
-        color: black;
-    }
+  iframe {
+    background-color: white;
+    color: black;
+  }
 }
