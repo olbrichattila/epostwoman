@@ -24,7 +24,12 @@ const ServerTab = ({ serverState = initialServerState, tabName }) => {
   };
 
   const startServer = () => {
-    window.electronAPI.sendMessage("start-server", localState.port, localState.rawBody, localState.headers);
+    window.electronAPI.sendMessage(
+      "start-server",
+      localState.port,
+      localState.rawBody,
+      localState.headers
+    );
 
     const handleResponse = (response) => {
       setServerStatus(response);
@@ -116,10 +121,28 @@ const ServerTab = ({ serverState = initialServerState, tabName }) => {
       <div className="responseWrapper">
         <p>{serverStatus}</p>
         {requestDetails && (
-          <div className="scrollWrapper">
-            <h2>Request Details</h2>
-            <pre>{JSON.stringify(requestDetails, null, 2)}</pre>
-          </div>
+          <PageControl>
+            <div tabName="Headers" className="scrollableTableWrapper">
+              <table>
+                <thead></thead>
+                <tbody>
+                  {Object.keys(requestDetails.headers).map((key) => (
+                    <tr>
+                      <td>{key}</td>
+                      <td>{requestDetails.headers[key]}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="scrollWrapper" tabName="Request body">
+              <pre>{requestDetails.body}</pre>
+            </div>
+            <div className="scrollWrapper" tabName="Request details">
+              
+              <pre>{JSON.stringify(requestDetails, null, 2)}</pre>
+            </div>
+          </PageControl>
         )}
       </div>
     </div>

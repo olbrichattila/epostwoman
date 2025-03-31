@@ -64,18 +64,22 @@ const getAllCollections = (event) => {
     if (!err) {
       event.reply("collection-response", data);
     }
-  })
-}
+  });
+};
 
 // HTTP call:
 ipcMain.on("http-request", (event, url, method, payload, headers) => {
+  headers = convertHeader(headers);
+  if (!headers["User-Agent"]) {
+    headers["User-Agent"] = "PostWoman/1.0";
+  }
   axios
     .request({
       method: method,
       url: url,
       data: payload,
       responseType: "text",
-      headers: convertHeader(headers),
+      headers,
     })
     .then((response) => {
       const data = {
@@ -151,7 +155,9 @@ ipcMain.on("get-server-status", (event, port) => {
 ipcMain.on("get-collections", getAllCollections);
 
 ipcMain.on("save-collection", (event, collectionName, data) => {
-  SaveCollection(collectionName, JSON.stringify(data), () => getAllCollections(event));
+  SaveCollection(collectionName, JSON.stringify(data), () =>
+    getAllCollections(event)
+  );
 });
 
 ipcMain.on("delete-collection", (event, collectionName) => {

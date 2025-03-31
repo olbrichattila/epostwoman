@@ -26,10 +26,14 @@ const RequestTab = ({ request = initialClientRequest, tabName }) => {
   const postRequest = () => {
     const requestBody =
       activePageIndex === 0 ? localState.requestBody : getFormRequest();
-    const cookieStrings = getCookieStrings(tabName);
-    const headers = cookieStrings
-      ? [...localState.headers, { key: "Cookie", value: cookieStrings }]
-      : localState.headers;
+    let headers = localState.headers;
+
+    if (!headers["Cookie"]) {
+      const cookieStrings = getCookieStrings(tabName);
+      headers = cookieStrings
+        ? [...localState.headers, { key: "Cookie", value: cookieStrings }]
+        : localState.headers;
+    }
 
     window.electronAPI.sendMessage(
       "http-request",
@@ -189,17 +193,17 @@ const RequestTab = ({ request = initialClientRequest, tabName }) => {
             <span>Content:</span>
             <PageControl>
               <div tabName="Headers" className="scrollableTableWrapper">
-              <table >
-                <thead></thead>
-                <tbody>
-                  {Object.keys(serverStatus.headers).map((key) => (
-                    <tr>
-                      <td>{key}</td>
-                      <td>{serverStatus.headers[key]}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                <table>
+                  <thead></thead>
+                  <tbody>
+                    {Object.keys(serverStatus.headers).map((key) => (
+                      <tr>
+                        <td>{key}</td>
+                        <td>{serverStatus.headers[key]}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
               <pre tabName="Plain Text">{serverStatus.data}</pre>
               <pre tabName="JSON">
