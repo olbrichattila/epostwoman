@@ -112,11 +112,20 @@ const RequestTab = ({ request = initialClientRequest, tabName }) => {
     }
   }, [data.requests, tabName]);
 
-  const parsedCookies = parseCookies(
-    serverStatus && serverStatus.headers["set-cookie"]
-      ? serverStatus.headers["set-cookie"]
-      : null
-  );
+
+  let cookieHeader = null
+  if (localState.headers) {
+    cookieHeader = localState.headers["set-cookie"] || localState.headers["Set-Cookie"] || localState.headers["SET-COOKIE"]
+  }
+  
+  let parsedCookies = null
+  if (cookieHeader) {
+    parsedCookies = parseCookies(
+      serverStatus && serverStatus.headers["set-cookie"]
+        ? serverStatus.headers["set-cookie"]
+        : null
+      );
+  }
 
   return (
     <div className="requestTab">
@@ -196,7 +205,7 @@ const RequestTab = ({ request = initialClientRequest, tabName }) => {
                 <table>
                   <thead></thead>
                   <tbody>
-                    {Object.keys(serverStatus.headers).map((key) => (
+                    {serverStatus.headers && Object.keys(serverStatus.headers).map((key) => (
                       <tr>
                         <td>{key}</td>
                         <td>{serverStatus.headers[key]}</td>
@@ -229,13 +238,13 @@ const RequestTab = ({ request = initialClientRequest, tabName }) => {
                   <thead>
                     <tr>
                       <th>Cookie</th>
-                      <th colSpan={parsedCookies.headerCount - 1}>
+                      <th colSpan={parsedCookies ? parsedCookies.headerCount - 1 : 1}>
                         Other parameters
                       </th>
                     </tr>
                   </thead>
                   <tbody>
-                    {parsedCookies.values.map((value) => (
+                    {parsedCookies && parsedCookies.values.map((value) => (
                       <tr>
                         {parsedCookies.render(value).map((item) => {
                           return (

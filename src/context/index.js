@@ -79,8 +79,7 @@ const DataContextProvider = ({ children }) => {
   const updateCookies = (tabName, headers) => {
     if (!headers) return;
 
-    const cookieHeader =
-      headers["set-cookie"] || headers["Set-Cookie"] || headers["SET-COOKIE"];
+    const cookieHeader = headers["set-cookie"] || headers["Set-Cookie"] || headers["SET-COOKIE"];
 
     if (!cookieHeader) return;
 
