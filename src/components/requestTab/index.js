@@ -220,7 +220,7 @@ const RequestTab = ({ request = initialClientRequest, tabName, tabIndex = 0 }) =
                 </div>
               </div>
             )}
-            <span>Content:</span>
+            <span>Content: <b>{serverStatus.status ?? ''}</b></span>
             <PageControl>
               <div tabName="Headers" className="scrollableTableWrapper">
                 <table>

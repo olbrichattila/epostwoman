@@ -94,7 +94,6 @@ const Page = () => {
   };
 
   const onSetRenameModalData = (value, index, tabName, isRequest) => {
-    console.log(value, index, tabName, isRequest);
     if (value === "rename") {
       setRenameModalData({
         index,
@@ -142,8 +141,6 @@ const Page = () => {
       window.electronAPI.removeListener("collection-response", handleResponse);
     };
   }, []);
-
-  console.log(data);
 
   return (
     <div className="page">
@@ -242,9 +239,9 @@ const Page = () => {
           >
             {data &&
               data.requests &&
-              Object.keys(data.requests).map((key) => (
+              Object.keys(data.requests).map((key, idx) => (
                 <RequestTab
-                  idx={`req_${key}`}
+                  key={`req_${key}_${idx}`}
                   tabName={key}
                   request={data.requests[key]}
                 />
@@ -272,8 +269,8 @@ const Page = () => {
           >
             {data &&
               data.servers &&
-              Object.keys(data.servers).map((key) => (
-                <ServerTab tabName={key} serverState={data.servers[key]} />
+              Object.keys(data.servers).map((key, idx) => (
+                <ServerTab key={`sk_${key}_${idx}`} tabName={key} serverState={data.servers[key]} />
               ))}
           </PageControl>
         </PageControl>

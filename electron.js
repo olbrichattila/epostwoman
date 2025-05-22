@@ -85,6 +85,8 @@ ipcMain.on("http-request", (event, url, method, payload, headers) => {
       const data = {
         headers: response.headers,
         data: response.data,
+        status: response.status,
+        statusText: response.statusText,
       };
       event.reply("http-response", data);
     })
@@ -121,7 +123,7 @@ ipcMain.on("start-server", (event, port, responseBody, headers) => {
         headers: req.headers,
         body: body,
         method: req.method,
-        url: req.url,
+        url: req.url
       });
 
       res.end(responseBody);
