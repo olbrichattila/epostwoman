@@ -7,12 +7,22 @@ import KeyValueEditor from "../keyValueEditor";
 
 export const initialServerState = { port: 3001, rawBody: "", headers: [] };
 
-const ServerTab = ({ serverState = initialServerState, tabName }) => {
+const ServerTab = ({
+  serverState = initialServerState,
+  tabName,
+  tabIndex = 0,
+}) => {
   const { data, serverRequests, onSetServers } = useContext(DataContext);
   const [localState, setLocalState] = useState(serverState);
   const [serverStatus, setServerStatus] = useState("Server is not running.");
   const [isServerRunning, setIsServerRunning] = useState(false);
   const [requestDetails, setRequestDetails] = useState(null);
+  const [activeTabIndex, setActiveTabIndex] = useState(tabIndex);
+
+  const onServerRequest = (tabName, status) => {
+    onSetServers(tabName, status);
+    setLocalState(status);
+  };
 
   const serverBtnClick = () => {
     if (isServerRunning) {
@@ -74,9 +84,14 @@ const ServerTab = ({ serverState = initialServerState, tabName }) => {
   }, [serverRequests[localState.port], localState.port]);
 
   useEffect(() => {
-    // Is is do something?, yes set initial state
-    // onSetServers(tabName, {...localState})
-  }, []);
+    if (serverState) {
+      setLocalState(serverState);
+    }
+  }, [serverState]);
+
+  useEffect(() => {
+    setActiveTabIndex(tabIndex);
+  }, [tabIndex]);
 
   return (
     <div className="serverTab">
@@ -86,7 +101,7 @@ const ServerTab = ({ serverState = initialServerState, tabName }) => {
           type="number"
           value={localState.port}
           onChange={(e) =>
-            onSetServers(tabName, {
+            onServerRequest(tabName, {
               ...localState,
               port: parseInt(e.target.value),
             })
@@ -99,12 +114,18 @@ const ServerTab = ({ serverState = initialServerState, tabName }) => {
         />
       </div>
       <div className="serverRawBody">
-        <PageControl>
+        <PageControl
+          tabIndex={activeTabIndex}
+          onPageChange={(i) => setActiveTabIndex(i)}
+        >
           <textarea
             tabName="Raw body"
             value={localState.rawBody}
             onChange={(e) =>
-              onSetServers(tabName, { ...localState, rawBody: e.target.value })
+              onServerRequest(tabName, {
+                ...localState,
+                rawBody: e.target.value,
+              })
             }
             placeholder="please enter raw response body, or leave it blank."
           />
@@ -112,7 +133,7 @@ const ServerTab = ({ serverState = initialServerState, tabName }) => {
             tabName="Response headers"
             data={localState.headers}
             onChange={(data) =>
-              onSetServers(tabName, { ...localState, headers: data })
+              onServerRequest(tabName, { ...localState, headers: data })
             }
           />
         </PageControl>
@@ -139,7 +160,6 @@ const ServerTab = ({ serverState = initialServerState, tabName }) => {
               <pre>{requestDetails.body}</pre>
             </div>
             <div className="scrollWrapper" tabName="Request details">
-              
               <pre>{JSON.stringify(requestDetails, null, 2)}</pre>
             </div>
           </PageControl>

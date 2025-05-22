@@ -16,16 +16,17 @@ const initialRenameModalState = {
 };
 
 const Page = () => {
-  const [requestTabs, setRequestTabs] = useState([]);
-  const [serverTabs, setServerTabs] = useState([]);
   const [renameModalData, setRenameModalData] = useState(
     initialRenameModalState
   );
   const [showNewCollectionModal, setShowNewCollectionModal] = useState(false);
   const [selectedCollection, setSelectedCollection] = useState("");
   const [collections, setCollections] = useState([]);
-  const [renameCollectionId, setRenameCollectionId] = useState(-1)
+  const [renameCollectionId, setRenameCollectionId] = useState(-1);
+  const [selectedRequestTabIndex, setSelectedRequestTabIndex] = useState(0);
+  const [selectedServerTabIndex, setSelectedServerTabIndex] = useState(0);
   const {
+    data,
     onGetState,
     onSetState,
     onSetServerRequest,
@@ -34,7 +35,7 @@ const Page = () => {
     renameRequestTab,
     deleteRequestTab,
     onSetRequests,
-    onSetServers
+    onSetServers,
   } = useContext(DataContext);
 
   const saveCollection = (name) => {
@@ -47,37 +48,19 @@ const Page = () => {
   };
 
   const onRenameCollection = (name) => {
-    const oldName = collections[renameCollectionId]
+    const oldName = collections[renameCollectionId];
     window.electronAPI.sendMessage("rename-collection", oldName, name);
-    setRenameCollectionId(-1)
-  }
+    setRenameCollectionId(-1);
+  };
 
   const loadCollection = (name) => {
     window.electronAPI.sendMessage("load-collection", name);
 
     const handleLoadResponse = (response) => {
-      setRequestTabs(
-        Object.keys(response.requests).map((key, index) => (
-          <RequestTab
-            key={index}
-            tabName={key}
-            request={response.requests[key]}
-          />
-        ))
-      );
-
-      setServerTabs(
-        Object.keys(response.servers).map((key, index) => (
-          <ServerTab
-            key={index}
-            tabName={key}
-            serverState={response.servers[key]}
-          />
-        ))
-      );
-
       onSetState(response);
       setSelectedCollection(name);
+      setSelectedRequestTabIndex(0);
+      setSelectedServerTabIndex(0);
       window.electronAPI.removeListener("load-response", handleLoadResponse);
     };
 
@@ -89,51 +72,29 @@ const Page = () => {
   };
 
   const onRenameTab = (name) => {
+    const oldTabName = renameModalData.value;
     if (renameModalData.isRequest) {
-      const oldTabName = requestTabs[renameModalData.index].props.tabName;
-
-      setRequestTabs([
-        ...requestTabs.slice(0, renameModalData.index),
-        <RequestTab key={renameModalData.index} tabName={name} />,
-        ...requestTabs.slice(renameModalData.index + 1),
-      ]);
-
       setRenameModalData(initialRenameModalState);
       renameRequestTab(oldTabName, name);
       return;
     }
 
-    const oldTabName = serverTabs[renameModalData.index].props.tabName;
-    setServerTabs([
-      ...serverTabs.slice(0, renameModalData.index),
-      <ServerTab key={renameModalData.index} tabName={name} />,
-      ...serverTabs.slice(renameModalData.index + 1),
-    ]);
-
     setRenameModalData(initialRenameModalState);
     renameServerTab(oldTabName, name);
   };
 
-  const onCloseRequestTab = (index) => {
-    const tabName = requestTabs[index].props.tabName;
-    setRequestTabs([
-      ...requestTabs.slice(0, index),
-      ...requestTabs.slice(index + 1),
-    ]);
-    deleteRequestTab(tabName)
+  const onCloseRequestTab = (tabIndex) => {
+    const tabName = Object.keys(data.requests)[tabIndex];
+    deleteRequestTab(tabName);
   };
 
-  const onCloseServerTab = (index) => {
-    const tabName = serverTabs[index].props.tabName;
-    setServerTabs([
-      ...serverTabs.slice(0, index),
-      ...serverTabs.slice(index + 1),
-    ]);
-
-    deleteServerTab(tabName)
+  const onCloseServerTab = (tabIndex) => {
+    const tabName = Object.keys(data.servers)[tabIndex];
+    deleteServerTab(tabName);
   };
 
   const onSetRenameModalData = (value, index, tabName, isRequest) => {
+    console.log(value, index, tabName, isRequest);
     if (value === "rename") {
       setRenameModalData({
         index,
@@ -144,7 +105,7 @@ const Page = () => {
 
     if (value === "close") {
       if (isRequest) {
-        onCloseRequestTab(index);
+        onCloseRequestTab(tabName);
       } else {
         onCloseServerTab(index);
       }
@@ -182,6 +143,8 @@ const Page = () => {
     };
   }, []);
 
+  console.log(data);
+
   return (
     <div className="page">
       <ModalInput
@@ -200,7 +163,7 @@ const Page = () => {
       />
       <ModalInput
         title="Rename collection"
-        value={collections[renameCollectionId] ?? '' }
+        value={collections[renameCollectionId] ?? ""}
         visible={renameCollectionId !== -1}
         onOk={(name) => onRenameCollection(name)}
         onCancel={() => setRenameCollectionId(-1)}
@@ -239,13 +202,13 @@ const Page = () => {
 
                   <td>
                     <span onClick={() => setRenameCollectionId(idx)}>
-                      <FaPen title="rename"/>
+                      <FaPen title="rename" />
                     </span>
                   </td>
 
                   <td>
                     <span onClick={() => deleteCollection(collectionName)}>
-                      <FaTrash title="delete"/>
+                      <FaTrash title="delete" />
                     </span>
                   </td>
                 </tr>
@@ -257,6 +220,8 @@ const Page = () => {
         <PageControl>
           <PageControl
             tabName="Requests"
+            tabIndex={selectedRequestTabIndex}
+            onPageChange={(index) => setSelectedRequestTabIndex(index)}
             canClose
             canEdit
             onClose={(index) => onCloseRequestTab(index)}
@@ -264,45 +229,52 @@ const Page = () => {
               onSetRenameModalData(
                 value,
                 index,
-                requestTabs[index].props.tabName,
+                Object.keys(data.requests)[index],
                 true
               )
             }
             onAddButton={() => {
-              const tabName = `Request ${requestTabs.length + 1}`;
-              setRequestTabs([
-                ...requestTabs,
-                <RequestTab key={requestTabs.length} tabName={tabName} />,
-              ]);
+              const tabName = `Request ${
+                Object.keys(data.requests).length + 1
+              }`;
               onSetRequests(tabName, initialClientRequest);
             }}
           >
-            {requestTabs}
+            {data &&
+              data.requests &&
+              Object.keys(data.requests).map((key) => (
+                <RequestTab
+                  idx={`req_${key}`}
+                  tabName={key}
+                  request={data.requests[key]}
+                />
+              ))}
           </PageControl>
           <PageControl
             tabName="Servers"
+            tabIndex={selectedServerTabIndex}
+            onPageChange={(index) => setSelectedServerTabIndex(index)}
             onClose={(index) => onCloseServerTab(index)}
             onMoreEdit={(index, value) =>
               onSetRenameModalData(
                 value,
                 index,
-                serverTabs[index].props.tabName,
+                Object.keys(data.servers)[index],
                 false
               )
             }
             canClose
             canEdit
             onAddButton={() => {
-              const tabName = `Server ${serverTabs.length + 1}`;
-              setServerTabs([
-                ...serverTabs,
-                <ServerTab tabName={tabName} />,
-              ])
-              onSetServers(tabName, initialServerState)
-            }
-          }
+              const tabName = `Server ${Object.keys(data.servers).length + 1}`;
+              onSetServers(tabName, initialServerState);
+            }}
           >
-            {serverTabs}
+            {data &&
+              data.servers &&
+              Object.keys(data.servers).map((key) => (
+                <ServerTab tabName={key} serverState={data.servers[key]} />
+              ))}
           </PageControl>
         </PageControl>
       </div>

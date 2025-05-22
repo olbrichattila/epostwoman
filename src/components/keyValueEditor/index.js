@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import KeyValueRow from "./row";
 import { initialKeyValueRow } from "./defaults";
 import "./index.css";
@@ -17,6 +17,10 @@ const KeyValueEditor = ({data = [], onChange = () => {}}) => {
     setRows(newRow)
     onChange(newRow);
   }
+
+  useEffect(() => {
+    setRows(data);
+  }, [data])
 
   return (
     <table className="keyValueEditor">

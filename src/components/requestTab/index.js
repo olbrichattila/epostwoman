@@ -16,12 +16,18 @@ export const initialClientRequest = {
   formRequest: [],
 };
 
-const RequestTab = ({ request = initialClientRequest, tabName }) => {
+const RequestTab = ({ request = initialClientRequest, tabName, tabIndex = 0 }) => {
   const { data, onSetRequests, updateCookies, getCookieStrings } =
     useContext(DataContext);
+
   const [serverStatus, setServerStatus] = useState(null);
   const [localState, setLocalState] = useState(request);
-  const [activePageIndex, setActivePageIndex] = useState(0);
+  const [activePageIndex, setActivePageIndex] = useState(tabIndex);
+
+  const onStatusChange = (tabName, status) => {
+    onSetRequests(tabName, status);
+    setLocalState(status);
+  };
 
   const postRequest = () => {
     const requestBody =
@@ -112,19 +118,31 @@ const RequestTab = ({ request = initialClientRequest, tabName }) => {
     }
   }, [data.requests, tabName]);
 
+  useEffect(() => {
+    if (request) {
+      setLocalState(request);
+    }
+  }, [request, tabName]);
 
-  let cookieHeader = null
+  useEffect(() => {
+    setActivePageIndex(tabIndex);
+  }, [tabIndex])
+
+  let cookieHeader = null;
   if (localState.headers) {
-    cookieHeader = localState.headers["set-cookie"] || localState.headers["Set-Cookie"] || localState.headers["SET-COOKIE"]
+    cookieHeader =
+      localState.headers["set-cookie"] ||
+      localState.headers["Set-Cookie"] ||
+      localState.headers["SET-COOKIE"];
   }
-  
-  let parsedCookies = null
+
+  let parsedCookies = null;
   if (cookieHeader) {
     parsedCookies = parseCookies(
       serverStatus && serverStatus.headers["set-cookie"]
         ? serverStatus.headers["set-cookie"]
         : null
-      );
+    );
   }
 
   return (
@@ -134,7 +152,7 @@ const RequestTab = ({ request = initialClientRequest, tabName }) => {
         <select
           value={localState.method}
           onChange={(e) =>
-            onSetRequests(tabName, { ...localState, method: e.target.value })
+            onStatusChange(tabName, { ...localState, method: e.target.value })
           }
         >
           <option value="GET">GET</option>
@@ -149,19 +167,22 @@ const RequestTab = ({ request = initialClientRequest, tabName }) => {
           value={localState.url}
           placeholder="URL"
           onChange={(e) =>
-            onSetRequests(tabName, { ...localState, url: e.target.value })
+            onStatusChange(tabName, { ...localState, url: e.target.value })
           }
         />
         <Button title="Send" onClick={() => postRequest()} />
       </div>
 
       <div className="requestRawBody">
-        <PageControl onPageChange={(index) => setActivePageIndex(index)}>
+        <PageControl
+          tabIndex={activePageIndex}
+          onPageChange={(index) => setActivePageIndex(index)}
+        >
           <div className="requestBody" tabName="Raw body">
             <textarea
               value={localState.requestBody}
               onChange={(e) =>
-                onSetRequests(tabName, {
+                onStatusChange(tabName, {
                   ...localState,
                   requestBody: e.target.value,
                 })
@@ -172,7 +193,7 @@ const RequestTab = ({ request = initialClientRequest, tabName }) => {
             <KeyValueEditor
               data={localState.formRequest}
               onChange={(data) =>
-                onSetRequests(tabName, { ...localState, formRequest: data })
+                onStatusChange(tabName, { ...localState, formRequest: data })
               }
             />
           </div>
@@ -180,7 +201,7 @@ const RequestTab = ({ request = initialClientRequest, tabName }) => {
             <KeyValueEditor
               data={localState.headers}
               onChange={(data) =>
-                onSetRequests(tabName, { ...localState, headers: data })
+                onStatusChange(tabName, { ...localState, headers: data })
               }
             />
           </div>
@@ -205,12 +226,13 @@ const RequestTab = ({ request = initialClientRequest, tabName }) => {
                 <table>
                   <thead></thead>
                   <tbody>
-                    {serverStatus.headers && Object.keys(serverStatus.headers).map((key) => (
-                      <tr>
-                        <td>{key}</td>
-                        <td>{serverStatus.headers[key]}</td>
-                      </tr>
-                    ))}
+                    {serverStatus.headers &&
+                      Object.keys(serverStatus.headers).map((key) => (
+                        <tr>
+                          <td>{key}</td>
+                          <td>{serverStatus.headers[key]}</td>
+                        </tr>
+                      ))}
                   </tbody>
                 </table>
               </div>
@@ -238,23 +260,28 @@ const RequestTab = ({ request = initialClientRequest, tabName }) => {
                   <thead>
                     <tr>
                       <th>Cookie</th>
-                      <th colSpan={parsedCookies ? parsedCookies.headerCount - 1 : 1}>
+                      <th
+                        colSpan={
+                          parsedCookies ? parsedCookies.headerCount - 1 : 1
+                        }
+                      >
                         Other parameters
                       </th>
                     </tr>
                   </thead>
                   <tbody>
-                    {parsedCookies && parsedCookies.values.map((value) => (
-                      <tr>
-                        {parsedCookies.render(value).map((item) => {
-                          return (
-                            <td>
-                              {item.key}: {item.value}
-                            </td>
-                          );
-                        })}
-                      </tr>
-                    ))}
+                    {parsedCookies &&
+                      parsedCookies.values.map((value) => (
+                        <tr>
+                          {parsedCookies.render(value).map((item) => {
+                            return (
+                              <td>
+                                {item.key}: {item.value}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      ))}
                   </tbody>
                 </table>
               </div>

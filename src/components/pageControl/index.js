@@ -1,17 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./index.css";
 import MoreButton from "../moreButton";
 
 const PageControl = ({
   children,
+  tabIndex = 0,
   onAddButton = null,
   onClose = () => {},
   onPageChange = () => {},
   onMoreEdit = () => {},
   canClose = false,
-  canEdit = false
+  canEdit = false,
 }) => {
-  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+  const [selectedTabIndex, setSelectedTabIndex] = useState(tabIndex);
 
   const onInternalAddButtonClick = () => {
     if (!onAddButton) {
@@ -20,10 +21,14 @@ const PageControl = ({
     onAddButton();
   };
 
-  const onTabClick= (index) => {
+  const onTabClick = (index) => {
     setSelectedTabIndex(index);
-    onPageChange(index)
-  }
+    onPageChange(index);
+  };
+
+  useEffect(() => {
+    setSelectedTabIndex(tabIndex);
+  }, [tabIndex]);
 
   return (
     <div className="pageControl">
@@ -37,9 +42,21 @@ const PageControl = ({
                 index === selectedTabIndex ? " active" : ""
               }`}
             >
-              {canEdit ? <MoreButton onMenuClick={(itemName) => onMoreEdit(index, itemName)} /> : null}
-              {child.props.tabName ? <label>{child.props.tabName}</label> : <label>{`Tab ${index + 1}`}</label>}
-              {canClose ? <span className="closeBtn" onClick={() => onClose(index)}>x</span> : null}
+              {canEdit ? (
+                <MoreButton
+                  onMenuClick={(itemName) => onMoreEdit(index, itemName)}
+                />
+              ) : null}
+              {child.props.tabName ? (
+                <label>{child.props.tabName}</label>
+              ) : (
+                <label>{`Tab ${index + 1}`}</label>
+              )}
+              {canClose ? (
+                <span className="closeBtn" onClick={() => onClose(index)}>
+                  x
+                </span>
+              ) : null}
             </div>
           );
         })}
