@@ -6,7 +6,6 @@
     border: 1px solid #333333;
     background-color: #333333;
     color: white;
-    border-radius: 3px;
     padding: 6px;
     margin: 0 12px;
   } 
@@ -15,4 +14,16 @@
     height: 150px;
     padding: 0;
   }
+
+  input {
+        box-sizing: border-box;
+        border: none !important;
+        border-bottom: 1px solid white !important;
+        background-color: black !important;
+        
+        &:focus {
+            border-bottom: 2px solid blue !important;;
+            outline: none;
+          }
+    }
 }

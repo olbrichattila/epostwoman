@@ -43,7 +43,6 @@
                 width: 24px;
                 height: 24px;
                 background-color: white;
-                border-radius: 3px;
 
                 &::before, &::after {
                     content: " ";

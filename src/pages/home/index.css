@@ -20,7 +20,7 @@
 
     table {
       border-collapse: collapse;
-      border: 1px solid #999999;
+      border: 1px solid #666666;
       tr {
         &.active {
           background-color: #003274;
@@ -33,7 +33,7 @@
         }
 
         td {
-          border: 1px solid #999999;
+          border: 1px solid #666666;
           padding: 6px;
           cursor: pointer;
           &:hover {

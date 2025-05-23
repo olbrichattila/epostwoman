@@ -9,18 +9,22 @@
 
     .tabButton {
       display: flex;
+      box-sizing: border-box;
+      position: relative;
       justify-items: space-around;
+      white-space: nowrap;
       cursor: pointer;
-      border-top: 1px solid #999999;
-      border-left: 1px solid #999999;
-      border-right: 1px solid #999999;
+      border-top: 1px solid #666666;
+      border-left: 1px solid #666666;
+      border-right: 1px solid #666666;
       padding: 6px 0px;
-      border-top-left-radius: 3px;
-      border-top-right-radius: 3px;
 
       &.active {
-        background-color: white;
-        color: black;
+        background-color: darkblue;
+        border-top: 2px solid white;
+        border-left: 1px solid #666666;
+        border-right: 1px solid #666666;
+        padding: 6px 0px;
 
         span {
           border: 1px solid black;
@@ -30,7 +34,7 @@
       }
 
       &:hover {
-        background-color: #666666;
+        background-color: #333333;
       }
 
       span.closeBtn {
@@ -48,8 +52,8 @@
       }
 
       label {
-        height: 20px;
-        line-height: 20px;
+        height: 22px;
+        line-height: 22px;
         padding: 0 12px;
       }
     }
