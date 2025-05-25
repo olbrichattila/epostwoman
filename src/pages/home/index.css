@@ -10,7 +10,7 @@
     flex-direction: column;
     background-color: #222222;
     width: 200px;
-    max-width: 200px;
+    min-width: 200px;
     overflow: auto;
     padding: 6px;
 
@@ -47,6 +47,7 @@
   .pages {
     display: flex;
     flex-grow: 1;
+    max-width: calc(100vw - 220px);
   }
 
   .collectionList {

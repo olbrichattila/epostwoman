@@ -4,61 +4,101 @@
   padding: 6px;
   width: 100%;
 
-  .tabButtons {
+  .tabButtonWrapper {
     display: flex;
+    max-width: 100vw;
 
-    .tabButton {
+    .tabButtonScrollWrapper {
       display: flex;
-      box-sizing: border-box;
-      position: relative;
-      justify-items: space-around;
-      white-space: nowrap;
-      cursor: pointer;
-      border-top: 1px solid #666666;
-      border-left: 1px solid #666666;
-      border-right: 1px solid #666666;
-      padding: 6px 0px;
 
-      &.active {
-        background-color: darkblue;
-        border-top: 2px solid white;
+      
+    }
+
+    .tabScrollButtons {
+      display: flex;
+
+     .vSpacer {
+        width: 12px;
+      }
+
+      span {
+        line-height: 35px;
+        font-weight: 800;
+        padding: 0 6px;
+        cursor: pointer;
+        user-select: none;
+        background-color: #444444;
+        border: 1px solid #222222;
+        border-radius: 3px;
+
+        &.disabled {
+          background-color: #999999;
+          cursor: not-allowed;
+        }
+
+        &:hover {
+          background-color: #222222;
+        }
+      }
+    }
+
+    .tabButtons {
+      display: flex;
+      max-width: calc(100% - 90px);
+      overflow: hidden;
+
+      .tabButton {
+        display: flex;
+        box-sizing: border-box;
+        position: relative;
+        justify-items: space-around;
+        white-space: nowrap;
+        cursor: pointer;
+        border-top: 1px solid #666666;
         border-left: 1px solid #666666;
         border-right: 1px solid #666666;
         padding: 6px 0px;
 
-        span {
-          border: 1px solid black;
-          background-color: black;
-          color: white;
+        &.active {
+          background-color: darkblue;
+          border-top: 2px solid white;
+          border-left: 1px solid #666666;
+          border-right: 1px solid #666666;
+          padding: 6px 0px;
+
+          span {
+            border: 1px solid black;
+            background-color: black;
+            color: white;
+          }
         }
-      }
 
-      &:hover {
-        background-color: #333333;
-      }
+        &:hover {
+          background-color: #333333;
+        }
 
-      span.closeBtn {
-        display: inline-block;
-        line-height: 20px;
-        border: 1px solid #a9a9a9;
-        background-color: #a9a9a9;
-        color: black;
-        border-radius: 50%;
-        box-sizing: border-box;
-        margin: 0px 3px;
-        width: 20px;
-        height: 20px;
-        margin-top: 1px;
-      }
+        span.closeBtn {
+          display: inline-block;
+          line-height: 20px;
+          border: 1px solid #a9a9a9;
+          background-color: #a9a9a9;
+          color: black;
+          border-radius: 50%;
+          box-sizing: border-box;
+          margin: 0px 3px;
+          width: 20px;
+          height: 20px;
+          margin-top: 1px;
+        }
 
-      label {
-        height: 22px;
-        line-height: 22px;
-        padding: 0 12px;
+        label {
+          height: 22px;
+          line-height: 22px;
+          padding: 0 12px;
+        }
       }
     }
   }
-
   .tabSheet {
     display: none;
     &.active {

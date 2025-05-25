@@ -18,7 +18,7 @@ const fs = require("fs");
 
 OpenDatabase();
 
-const isDev = false;
+const isDev = true;
 
 let mainWindow;
 let servers = {};
@@ -38,6 +38,7 @@ function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
+      additionalArguments: [`--isDev=${isDev}`],
       nodeIntegration: false,
       contextIsolation: true,
       preload: path.join(__dirname, "preload.js"),
@@ -176,6 +177,22 @@ ipcMain.on("load-collection", (event, collectionName) => {
       event.reply("load-response", JSON.parse(data["collection"]));
     }
   });
+});
+
+ipcMain.on('show-context-menu', (event, params) => {
+  if (!isDev) {
+    return
+  }
+  const win = BrowserWindow.fromWebContents(event.sender);
+  const menu = Menu.buildFromTemplate([
+    {
+      label: 'Inspect Element',
+      click: () => {
+        win.webContents.inspectElement(params.x, params.y);
+      },
+    },
+  ]);
+  menu.popup({ window: win });
 });
 
 app.on("ready", createWindow);

@@ -5,6 +5,7 @@ import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import Button from "../button";
 import PageControl from "../pageControl";
 import KeyValueEditor from "../keyValueEditor";
+import Loader from "../loader";
 import "./index.css";
 
 export const initialClientRequest = {
@@ -19,7 +20,7 @@ export const initialClientRequest = {
 const RequestTab = ({ request = initialClientRequest, tabName, tabIndex = 0 }) => {
   const { data, onSetRequests, updateCookies, getCookieStrings } =
     useContext(DataContext);
-
+  const [isLoading, setIsLoading] = useState(false)
   const [serverStatus, setServerStatus] = useState(null);
   const [localState, setLocalState] = useState(request);
   const [activePageIndex, setActivePageIndex] = useState(tabIndex);
@@ -41,6 +42,7 @@ const RequestTab = ({ request = initialClientRequest, tabName, tabIndex = 0 }) =
         : localState.headers;
     }
 
+    setIsLoading(true)
     window.electronAPI.sendMessage(
       "http-request",
       localState.url,
@@ -50,6 +52,7 @@ const RequestTab = ({ request = initialClientRequest, tabName, tabIndex = 0 }) =
     );
 
     const handleResponse = (response) => {
+      setIsLoading(false)
       setServerStatus(response);
       updateCookies(tabName, response.headers);
       window.electronAPI.removeListener("http-response", handleResponse);
@@ -146,6 +149,8 @@ const RequestTab = ({ request = initialClientRequest, tabName, tabIndex = 0 }) =
   }
 
   return (
+    <>
+    {isLoading && <Loader />}
     <div className="requestTab">
       <div className="requestTabHead">
         <span>Method: </span>
@@ -290,6 +295,7 @@ const RequestTab = ({ request = initialClientRequest, tabName, tabIndex = 0 }) =
         ) : null}
       </div>
     </div>
+    </>
   );
 };
 

@@ -1,0 +1,47 @@
+.load_fader {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1200;
+  background-color: black;
+  opacity: 0.5;
+}
+
+.loader {
+  position: fixed;
+  text-align: center;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1201;
+  .loader__block {
+    margin-top: calc(50vh - 48px);
+    font-size: 18px;
+    font-weight: 800;
+    color: #5a287d;
+
+    .loader__spinner {
+      margin: 12px;
+      width: 48px;
+      height: 48px;
+      border: 5px solid #fff;
+      border-bottom-color: #5a287d;
+      border-radius: 50%;
+      display: inline-block;
+      box-sizing: border-box;
+      animation: rotation 1s linear infinite;
+    }
+  }
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
