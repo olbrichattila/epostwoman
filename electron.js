@@ -18,7 +18,7 @@ const fs = require("fs");
 
 OpenDatabase();
 
-const isDev = true;
+const isDev = false;
 
 let mainWindow;
 let servers = {};
